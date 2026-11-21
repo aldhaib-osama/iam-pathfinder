@@ -1,3 +1,21 @@
+Date (UTC): 2026-11-21T14:13:26.516355+00:00
+Python: 3.10.12
+Runner: assistant, not Dahoba
+Source commit: 2412029c1f3fa8521bd24f4b7b9581da921a3cdd
+user:auditor-aya: no escalation path found (within modelled techniques)
+user:ci-bot: CANDIDATE PATH in 1 step(s)  user:ci-bot -> ADMIN
+    user:ci-bot -> ADMIN: iam:CreatePolicyVersion on arn:aws:iam::111122223333:policy/ci-policy
+user:dev-dana: CANDIDATE PATH in 1 step(s)  user:dev-dana -> role:lambda-admin -> ADMIN
+    user:dev-dana -> role:lambda-admin: iam:PassRole + lambda:CreateFunction + lambda:InvokeFunction
+user:helpdesk-hana: CANDIDATE PATH in 1 step(s)  user:helpdesk-hana -> user:admin-amir -> ADMIN
+    user:helpdesk-hana -> user:admin-amir: iam:CreateAccessKey
+test_dot_and_normal_exit_status_consistent (test_adversarial_inputs.AdditionalInputs) ... ok
+test_duplicate_entities_never_silently_overwrite (test_adversarial_inputs.AdditionalInputs) ... ok
+test_every_known_pagination_marker_rejects_incomplete_input (test_adversarial_inputs.AdditionalInputs) ... ok
+test_explicit_empty_snapshot_is_distinct_from_missing_data (test_adversarial_inputs.AdditionalInputs) ... ok
+test_mutually_exclusive_policy_fields_rejected (test_adversarial_inputs.AdditionalInputs) ... ok
+test_plain_json_percent_literals_preserved_encoded_json_decoded (test_adversarial_inputs.AdditionalInputs) ... ok
+test_supplied_malformed_boundary_is_not_ignored (test_adversarial_inputs.AdditionalInputs) ... ok
 test_end_to_end (test_depth.CLI) ... ok
 test_boundary_blocks_path (test_depth.Export) ... ok
 test_decodes_urlencoded_docs_and_finds_paths (test_depth.Export) ... ok
@@ -43,13 +61,61 @@ test_empty_boundary_cannot_silently_disappear (test_review_expanded.ValidationRe
 test_malformed_policy_and_overlay_rejected (test_review_expanded.ValidationReview) ... ok
 
 ----------------------------------------------------------------------
-Ran 43 tests in 0.395s
+Ran 50 tests in 0.396s
 
 OK
+
+Exit code: 0
+
+Reproducible experiments, same source commit and date; executed by assistant, not Dahoba:
+
+--- explicit-deny ---
+Assistant experiment on fictional copy
+Exit: 3
+user:auditor-aya: no escalation path found (within modelled techniques)
+user:ci-bot: CANDIDATE PATH in 1 step(s)  user:ci-bot -> ADMIN
+    user:ci-bot -> ADMIN: iam:CreatePolicyVersion on arn:aws:iam::111122223333:policy/ci-policy
+user:dev-dana: no escalation path found (within modelled techniques)
+user:helpdesk-hana: CANDIDATE PATH in 1 step(s)  user:helpdesk-hana -> user:admin-amir -> ADMIN
+    user:helpdesk-hana -> user:admin-amir: iam:CreateAccessKey
+
+--- remove-passrole ---
+Assistant experiment on fictional copy
+Exit: 3
+user:auditor-aya: no escalation path found (within modelled techniques)
+user:ci-bot: CANDIDATE PATH in 1 step(s)  user:ci-bot -> ADMIN
+    user:ci-bot -> ADMIN: iam:CreatePolicyVersion on arn:aws:iam::111122223333:policy/ci-policy
+user:dev-dana: no escalation path found (within modelled techniques)
+user:helpdesk-hana: CANDIDATE PATH in 1 step(s)  user:helpdesk-hana -> user:admin-amir -> ADMIN
+    user:helpdesk-hana -> user:admin-amir: iam:CreateAccessKey
+
+--- boundary ---
+Assistant experiment on fictional copy
+Exit: 3
+user:auditor-aya: no escalation path found (within modelled techniques)
+user:ci-bot: CANDIDATE PATH in 1 step(s)  user:ci-bot -> ADMIN
+    user:ci-bot -> ADMIN: iam:CreatePolicyVersion on arn:aws:iam::111122223333:policy/ci-policy
+user:dev-dana: no escalation path found (within modelled techniques)
+user:helpdesk-hana: CANDIDATE PATH in 1 step(s)  user:helpdesk-hana -> user:admin-amir -> ADMIN
+    user:helpdesk-hana -> user:admin-amir: iam:CreateAccessKey
+
+--- overlay ---
+Assistant experiment on fictional copy
+Exit: 3
+user:auditor-aya: no escalation path found (within modelled techniques)
+user:ci-bot: CANDIDATE PATH in 1 step(s)  user:ci-bot -> ADMIN
+    user:ci-bot -> ADMIN: iam:CreatePolicyVersion on arn:aws:iam::111122223333:policy/ci-policy
+user:dev-dana: no escalation path found (within modelled techniques)
+user:helpdesk-hana: CANDIDATE PATH in 1 step(s)  user:helpdesk-hana -> user:admin-amir -> ADMIN
+    user:helpdesk-hana -> user:admin-amir: iam:CreateAccessKey
+
+--- condition ---
+Assistant experiment on fictional copy
+Exit: 3
 user:auditor-aya: no escalation path found (within modelled techniques)
 user:ci-bot: CANDIDATE PATH in 1 step(s)  user:ci-bot -> ADMIN
     user:ci-bot -> ADMIN: iam:CreatePolicyVersion on arn:aws:iam::111122223333:policy/ci-policy
 user:dev-dana: CANDIDATE PATH in 1 step(s)  user:dev-dana -> role:lambda-admin -> ADMIN
-    user:dev-dana -> role:lambda-admin: iam:PassRole + lambda:CreateFunction + lambda:InvokeFunction
+    user:dev-dana -> role:lambda-admin: iam:PassRole + lambda:CreateFunction + lambda:InvokeFunction [conditional]
 user:helpdesk-hana: CANDIDATE PATH in 1 step(s)  user:helpdesk-hana -> user:admin-amir -> ADMIN
     user:helpdesk-hana -> user:admin-amir: iam:CreateAccessKey
