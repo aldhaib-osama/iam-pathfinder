@@ -1,0 +1,118 @@
+{
+ "UserDetailList": [
+  {
+   "UserName": "dev",
+   "Arn": "arn:aws:iam::111122223333:user/dev",
+   "GroupList": [
+    "devs"
+   ],
+   "UserPolicyList": [
+    {
+     "PolicyName": "lam",
+     "PolicyDocument": "%7B%22Version%22%3A%20%222012-10-17%22%2C%20%22Statement%22%3A%20%5B%7B%22Effect%22%3A%20%22Allow%22%2C%20%22Action%22%3A%20%5B%22iam%3APassRole%22%2C%20%22lambda%3ACreateFunction%22%2C%20%22lambda%3AInvokeFunction%22%5D%2C%20%22Resource%22%3A%20%22%2A%22%7D%5D%7D"
+    }
+   ],
+   "AttachedManagedPolicies": []
+  },
+  {
+   "UserName": "bounded-dev",
+   "Arn": "arn:aws:iam::111122223333:user/bounded-dev",
+   "GroupList": [],
+   "UserPolicyList": [
+    {
+     "PolicyName": "lam",
+     "PolicyDocument": "%7B%22Version%22%3A%20%222012-10-17%22%2C%20%22Statement%22%3A%20%5B%7B%22Effect%22%3A%20%22Allow%22%2C%20%22Action%22%3A%20%5B%22iam%3APassRole%22%2C%20%22lambda%3ACreateFunction%22%2C%20%22lambda%3AInvokeFunction%22%5D%2C%20%22Resource%22%3A%20%22%2A%22%7D%5D%7D"
+    }
+   ],
+   "AttachedManagedPolicies": [],
+   "PermissionsBoundary": {
+    "PermissionsBoundaryArn": "arn:aws:iam::111122223333:policy/dev-boundary",
+    "PermissionsBoundaryType": "Policy"
+   }
+  },
+  {
+   "UserName": "team-lead",
+   "Arn": "arn:aws:iam::111122223333:user/team-lead",
+   "GroupList": [],
+   "UserPolicyList": [],
+   "AttachedManagedPolicies": [
+    {
+     "PolicyName": "team-policy",
+     "PolicyArn": "arn:aws:iam::111122223333:policy/team-policy"
+    }
+   ]
+  },
+  {
+   "UserName": "intern",
+   "Arn": "arn:aws:iam::111122223333:user/intern",
+   "GroupList": [
+    "devs"
+   ],
+   "UserPolicyList": [],
+   "AttachedManagedPolicies": [
+    {
+     "PolicyName": "ReadOnlyAccess",
+     "PolicyArn": "arn:aws:iam::aws:policy/ReadOnlyAccess"
+    }
+   ]
+  }
+ ],
+ "GroupDetailList": [
+  {
+   "GroupName": "devs",
+   "Arn": "arn:aws:iam::111122223333:group/devs",
+   "GroupPolicyList": [
+    {
+     "PolicyName": "ro",
+     "PolicyDocument": "%7B%22Version%22%3A%20%222012-10-17%22%2C%20%22Statement%22%3A%20%5B%7B%22Effect%22%3A%20%22Allow%22%2C%20%22Action%22%3A%20%5B%22s3%3AGet%2A%22%2C%20%22s3%3AList%2A%22%5D%2C%20%22Resource%22%3A%20%22%2A%22%7D%5D%7D"
+    }
+   ],
+   "AttachedManagedPolicies": []
+  }
+ ],
+ "RoleDetailList": [
+  {
+   "RoleName": "lambda-exec",
+   "Arn": "arn:aws:iam::111122223333:role/lambda-exec",
+   "AssumeRolePolicyDocument": "%7B%22Version%22%3A%20%222012-10-17%22%2C%20%22Statement%22%3A%20%5B%7B%22Effect%22%3A%20%22Allow%22%2C%20%22Principal%22%3A%20%7B%22Service%22%3A%20%22lambda.amazonaws.com%22%7D%2C%20%22Action%22%3A%20%22sts%3AAssumeRole%22%7D%5D%7D",
+   "RolePolicyList": [
+    {
+     "PolicyName": "admin",
+     "PolicyDocument": "%7B%22Version%22%3A%20%222012-10-17%22%2C%20%22Statement%22%3A%20%5B%7B%22Effect%22%3A%20%22Allow%22%2C%20%22Action%22%3A%20%22%2A%22%2C%20%22Resource%22%3A%20%22%2A%22%7D%5D%7D"
+    }
+   ],
+   "AttachedManagedPolicies": []
+  }
+ ],
+ "Policies": [
+  {
+   "PolicyName": "team-policy",
+   "Arn": "arn:aws:iam::111122223333:policy/team-policy",
+   "DefaultVersionId": "v2",
+   "PolicyVersionList": [
+    {
+     "Document": "%7B%22Version%22%3A%20%222012-10-17%22%2C%20%22Statement%22%3A%20%5B%7B%22Effect%22%3A%20%22Allow%22%2C%20%22Action%22%3A%20%5B%22iam%3ASetDefaultPolicyVersion%22%2C%20%22iam%3ACreatePolicyVersion%22%5D%2C%20%22Resource%22%3A%20%22arn%3Aaws%3Aiam%3A%3A111122223333%3Apolicy/team-policy%22%7D%5D%7D",
+     "VersionId": "v2",
+     "IsDefaultVersion": true
+    },
+    {
+     "Document": "%7B%22Version%22%3A%20%222012-10-17%22%2C%20%22Statement%22%3A%20%5B%7B%22Effect%22%3A%20%22Allow%22%2C%20%22Action%22%3A%20%22%2A%22%2C%20%22Resource%22%3A%20%22%2A%22%7D%5D%7D",
+     "VersionId": "v1",
+     "IsDefaultVersion": false
+    }
+   ]
+  },
+  {
+   "PolicyName": "dev-boundary",
+   "Arn": "arn:aws:iam::111122223333:policy/dev-boundary",
+   "DefaultVersionId": "v1",
+   "PolicyVersionList": [
+    {
+     "Document": "%7B%22Version%22%3A%20%222012-10-17%22%2C%20%22Statement%22%3A%20%5B%7B%22Effect%22%3A%20%22Allow%22%2C%20%22Action%22%3A%20%5B%22s3%3A%2A%22%2C%20%22lambda%3A%2A%22%5D%2C%20%22Resource%22%3A%20%22%2A%22%7D%5D%7D",
+     "VersionId": "v1",
+     "IsDefaultVersion": true
+    }
+   ]
+  }
+ ]
+}
