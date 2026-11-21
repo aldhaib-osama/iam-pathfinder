@@ -1,3 +1,9 @@
+# Historical review archive
+
+This earlier AI-assisted review record describes previous snapshots, not an independent human review or current verification. Its original test counts and CI statements are retained for traceability. See `TEST_RESULTS.txt` and the current README for dated output and execution provenance.
+
+---
+
 # Expanded-feature independent review, 21 November 2026
 
 Status: AI-assisted educational portfolio project. Dahab has not reviewed or run it. Not production-ready and not an AWS authorization engine. No account access or publication occurred.
