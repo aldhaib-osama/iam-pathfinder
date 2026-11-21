@@ -1,0 +1,21 @@
+{"account": "111122223333",
+ "groups": [{"name": "devs", "policies": [{"name": "devs-ro", "document": {"Statement": [{"Effect": "Allow", "Action": ["s3:Get*", "s3:List*"], "Resource": "*"}]}}]}],
+ "users": [
+  {"name": "dev-dana", "groups": ["devs"], "policies": [{"name": "pass-lambda", "document": {"Statement": [
+     {"Effect": "Allow", "Action": ["iam:PassRole"], "Resource": "arn:aws:iam::111122223333:role/lambda-admin"},
+     {"Effect": "Allow", "Action": ["lambda:CreateFunction", "lambda:InvokeFunction"], "Resource": "*"}]}}]},
+  {"name": "ci-bot", "policies": [{"name": "ci", "arn": "arn:aws:iam::111122223333:policy/ci-policy", "document": {"Statement": [
+     {"Effect": "Allow", "Action": ["iam:CreatePolicyVersion", "iam:SetDefaultPolicyVersion"], "Resource": "arn:aws:iam::111122223333:policy/ci-policy"}]}}]},
+  {"name": "helpdesk-hana", "policies": [{"name": "keys", "document": {"Statement": [
+     {"Effect": "Allow", "Action": "iam:CreateAccessKey", "Resource": "arn:aws:iam::111122223333:user/*"}]}}]},
+  {"name": "admin-amir", "policies": [{"name": "admin", "document": {"Statement": [{"Effect": "Allow", "Action": "*", "Resource": "*"}]}}]},
+  {"name": "auditor-aya", "policies": [{"name": "sec", "document": {"Statement": [
+     {"Effect": "Allow", "Action": ["iam:Get*", "iam:List*"], "Resource": "*"},
+     {"Effect": "Deny", "Action": "iam:CreateAccessKey", "Resource": "*"}]}}]}
+ ],
+ "roles": [
+  {"name": "lambda-admin", "trust": {"Statement": [{"Effect": "Allow", "Principal": {"Service": "lambda.amazonaws.com"}, "Action": "sts:AssumeRole"}]},
+   "policies": [{"name": "admin", "document": {"Statement": [{"Effect": "Allow", "Action": "*", "Resource": "*"}]}}]},
+  {"name": "break-glass", "trust": {"Statement": [{"Effect": "Allow", "Principal": {"AWS": "arn:aws:iam::111122223333:user/admin-amir"}, "Action": "sts:AssumeRole"}]},
+   "policies": [{"name": "admin", "document": {"Statement": [{"Effect": "Allow", "Action": "*", "Resource": "*"}]}}]}
+ ]}
