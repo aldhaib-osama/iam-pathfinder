@@ -8,12 +8,15 @@ from __future__ import annotations
 import json
 import urllib.parse
 from typing import Any, Dict, List, Optional
-from .model import validate_policy
+from .model import validate_policy, _unique
 
 
 def _doc(d: Any) -> Dict[str, Any]:
     if isinstance(d, str):
-        d = json.loads(urllib.parse.unquote(d))
+        try:
+            d = json.loads(d)
+        except json.JSONDecodeError:
+            d = json.loads(urllib.parse.unquote(d))
     if not isinstance(d, dict) or "Statement" not in d:
         raise ValueError("policy document has no Statement")
     return validate_policy(d)
@@ -29,15 +32,27 @@ def _account_from_arn(arn: str) -> str:
 def from_authorization_details(raw: Dict[str, Any], deny_overlays: Optional[List[Dict[str, Any]]] = None) -> Dict[str, Any]:
     if not isinstance(raw, dict):
         raise ValueError("export must be an object")
-    if raw.get("IsTruncated") or raw.get("Marker"):
+    if raw.get("IsTruncated") or raw.get("Marker") or raw.get("NextToken"):
         raise ValueError("paginated export is incomplete; combine all pages first")
     users, roles, groups_raw = raw.get("UserDetailList", []), raw.get("RoleDetailList", []), raw.get("GroupDetailList", [])
-    if not (users or roles or groups_raw):
-        raise ValueError("input has no UserDetailList/RoleDetailList/GroupDetailList (is it get-account-authorization-details output?)")
+    if not any(k in raw for k in ("UserDetailList", "RoleDetailList", "GroupDetailList")):
+        raise ValueError("input lacks IAM entity collections")
     for collection in (users, roles, groups_raw, raw.get("Policies", [])):
         if not isinstance(collection, list) or any(not isinstance(item, dict) for item in collection):
             raise ValueError("export collections must be arrays of objects")
-    sample = (users or roles or groups_raw)[0]["Arn"]
+    for collection, key, label in ((users, "UserName", "users"), (roles, "RoleName", "roles"),
+                                   (groups_raw, "GroupName", "groups"), (raw.get("Policies", []), "Arn", "managed policies")):
+        _unique(collection, key, label)
+    entities = users or roles or groups_raw
+    if entities:
+        sample = entities[0]["Arn"]
+    else:
+        # A truly empty export may not contain any account identifier. Do not guess.
+        customer_policies = [pol for pol in raw.get("Policies", [])
+                             if _account_from_arn(pol["Arn"]) != "aws"]
+        if not customer_policies:
+            raise ValueError("empty export has no account identifier; use an explicit simplified snapshot with account and empty entity arrays")
+        sample = customer_policies[0]["Arn"]
     account = _account_from_arn(sample)
 
     for item in users + roles + groups_raw:
@@ -71,10 +86,12 @@ def from_authorization_details(raw: Dict[str, Any], deny_overlays: Optional[List
         return out
 
     def boundary(item) -> Optional[Dict[str, Any]]:
-        b = item.get("PermissionsBoundary") or {}
-        arn = b.get("PermissionsBoundaryArn")
-        if not arn:
+        if "PermissionsBoundary" not in item:
             return None
+        b = item["PermissionsBoundary"]
+        if not isinstance(b, dict) or not isinstance(b.get("PermissionsBoundaryArn"), str) or not b["PermissionsBoundaryArn"]:
+            raise ValueError("supplied permissions boundary requires PermissionsBoundaryArn")
+        arn = b["PermissionsBoundaryArn"]
         m = managed.get(arn)
         if m and m["default"]:
             return m["default"]
