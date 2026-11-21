@@ -1,0 +1,55 @@
+test_end_to_end (test_depth.CLI) ... ok
+test_boundary_blocks_path (test_depth.Export) ... ok
+test_decodes_urlencoded_docs_and_finds_paths (test_depth.Export) ... ok
+test_garbage_input_rejected (test_depth.Export) ... ok
+test_group_policy_is_merged (test_depth.Export) ... ok
+test_missing_boundary_policy_fails_loudly (test_depth.Export) ... ok
+test_unresolved_aws_managed_policy_is_reported_not_guessed (test_depth.Export) ... ok
+test_overlay_denies_lambda_path_but_not_unrelated (test_depth.Overlay) ... ok
+test_overlay_must_be_deny_only (test_depth.Overlay) ... ok
+test_unrelated_overlay_does_not_unmake_admin (test_depth.Overlay) ... ok
+test_set_default_found_with_admin_version (test_depth.PolicyVersions) ... ok
+test_set_default_needs_an_admin_version_when_versions_known (test_depth.PolicyVersions) ... ok
+test_boundary_never_adds_edges (test_depth.Property) ... ok
+test_deny_overlay_never_adds_edges (test_depth.Property) ... ok
+test_random_snapshots_never_crash_and_paths_are_valid (test_depth.Property) ... ok
+test_every_technique_has_a_hint (test_depth.Report) ... ok
+test_report_has_hints_and_caveats (test_depth.Report) ... ok
+test_admins_excluded (test_iampathfinder.Graph) ... ok
+test_cli_exit_code (test_iampathfinder.Graph) ... ok
+test_createkey_lateral_then_admin (test_iampathfinder.Graph) ... ok
+test_explicit_deny_blocks (test_iampathfinder.Graph) ... ok
+test_passrole_lambda (test_iampathfinder.Graph) ... ok
+test_policy_version (test_iampathfinder.Graph) ... ok
+test_deny_wins (test_iampathfinder.Policy) ... ok
+test_notaction_and_conditional (test_iampathfinder.Policy) ... ok
+test_resource_scoping (test_iampathfinder.Policy) ... ok
+test_wildcards_case_insensitive_actions (test_iampathfinder.Policy) ... ok
+test_account_trust_needs_identity_allow (test_iampathfinder.Trust) ... ok
+test_conditional_deny_and_resource_specific_admin_deny (test_regressions.Regression) ... ok
+test_conditional_trust_cannot_be_unconditional (test_regressions.Regression) ... ok
+test_direct_trust_needs_no_identity_allow_but_deny_wins (test_regressions.Regression) ... ok
+test_service_trust_requires_assumerole_action (test_regressions.Regression) ... ok
+test_setdefaultversion_requires_unverified_existing_version (test_regressions.Regression) ... ok
+test_admin_resource_specific_org_deny_is_not_missed (test_review_expanded.ExpandedReview) ... ok
+test_conditional_overlay_marks_direct_trust_uncertain (test_review_expanded.ExpandedReview) ... ok
+test_direct_trust_boundary_explicit_deny_not_bypassed (test_review_expanded.ExpandedReview) ... ok
+test_direct_trust_org_deny_not_bypassed (test_review_expanded.ExpandedReview) ... ok
+test_existing_version_cannot_escape_boundary (test_review_expanded.ExpandedReview) ... ok
+test_import_preserves_paths_and_partition (test_review_expanded.ExpandedReview) ... ok
+test_self_attach_cannot_escape_readonly_boundary (test_review_expanded.ExpandedReview) ... ok
+test_truncated_and_mixed_account_exports_rejected (test_review_expanded.ExpandedReview) ... ok
+test_empty_boundary_cannot_silently_disappear (test_review_expanded.ValidationReview) ... ok
+test_malformed_policy_and_overlay_rejected (test_review_expanded.ValidationReview) ... ok
+
+----------------------------------------------------------------------
+Ran 43 tests in 0.395s
+
+OK
+user:auditor-aya: no escalation path found (within modelled techniques)
+user:ci-bot: CANDIDATE PATH in 1 step(s)  user:ci-bot -> ADMIN
+    user:ci-bot -> ADMIN: iam:CreatePolicyVersion on arn:aws:iam::111122223333:policy/ci-policy
+user:dev-dana: CANDIDATE PATH in 1 step(s)  user:dev-dana -> role:lambda-admin -> ADMIN
+    user:dev-dana -> role:lambda-admin: iam:PassRole + lambda:CreateFunction + lambda:InvokeFunction
+user:helpdesk-hana: CANDIDATE PATH in 1 step(s)  user:helpdesk-hana -> user:admin-amir -> ADMIN
+    user:helpdesk-hana -> user:admin-amir: iam:CreateAccessKey
