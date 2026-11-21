@@ -34,10 +34,10 @@ def _main(argv=None):
     elif overlays:
         data["deny_overlays"] = overlays
     acct = load_account(data)
+    res = find_paths(acct, include_conditional=not a.no_conditional)
     if a.dot:
         print(to_dot(acct))
-        return 0
-    res = find_paths(acct, include_conditional=not a.no_conditional)
+        return 3 if any(v for v in res.values()) else 0
     if a.report:
         with open(a.report, 'w', encoding='utf-8') as f:
             f.write(render(res, unresolved))
