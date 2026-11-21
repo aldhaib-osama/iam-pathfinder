@@ -48,9 +48,26 @@ def validate_policy(doc):
                 values = st[key] if isinstance(st[key], list) else [st[key]]
                 if not values or any(not isinstance(v, str) or not v for v in values):
                     raise ValueError(key + " must contain nonempty strings")
+        if "Resource" in st and "NotResource" in st:
+            raise ValueError("Resource and NotResource are mutually exclusive")
+        if "Principal" in st and "NotPrincipal" in st:
+            raise ValueError("Principal and NotPrincipal are mutually exclusive")
         if "Condition" in st and not isinstance(st["Condition"], dict):
             raise ValueError("Condition must be an object")
     return doc
+
+
+def _unique(items, key, label):
+    if not isinstance(items, list) or any(not isinstance(item, dict) for item in items):
+        raise ValueError(label + " must be an array of objects")
+    seen = set()
+    for item in items:
+        value = item.get(key)
+        if not isinstance(value, str) or not value:
+            raise ValueError(label + " requires nonempty " + key)
+        if value in seen:
+            raise ValueError("duplicate " + label + ": " + value)
+        seen.add(value)
 
 
 def _docs(policies) -> (list, list):
@@ -65,6 +82,10 @@ def _docs(policies) -> (list, list):
 def load_account(data: Dict[str, Any]) -> Account:
     if not isinstance(data, dict):
         raise ValueError("snapshot must be an object")
+    if not any(key in data for key in ("users", "roles", "groups")):
+        raise ValueError("snapshot needs explicit users, roles or groups arrays; use empty arrays for an intentionally empty snapshot")
+    for key in ("users", "roles", "groups"):
+        _unique(data.get(key, []), "name", key)
     acct = str(data["account"])
     groups = {g["name"]: g for g in data.get("groups", [])}
     out: Dict[str, Principal] = {}
