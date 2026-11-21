@@ -4,3 +4,7 @@ __pycache__/
 *.egg-info/
 build/
 dist/
+
+# Private local AWS exports and generated reports
+auth.json
+report.md
