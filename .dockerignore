@@ -1,0 +1,13 @@
+# Send only code, fictional examples and tests to the image builder.
+**
+!Dockerfile
+!LICENSE
+!src/
+!src/**
+!examples/
+!examples/**
+!tests/
+!tests/**
+
+**/__pycache__/
+**/*.py[cod]
