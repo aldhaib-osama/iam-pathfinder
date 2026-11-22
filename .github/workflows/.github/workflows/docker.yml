@@ -1,0 +1,63 @@
+name: Docker checks
+
+on:
+  push:
+    paths:
+      - Dockerfile
+      - .dockerignore
+      - src/**
+      - tests/**
+      - examples/**
+      - .github/workflows/docker.yml
+  pull_request:
+    paths:
+      - Dockerfile
+      - .dockerignore
+      - src/**
+      - tests/**
+      - examples/**
+      - .github/workflows/docker.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  docker:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build and run the test image
+        run: |
+          docker build --pull --target test -t iam-pathfinder:test .
+          docker run --rm --network none --read-only --cap-drop ALL \
+            --security-opt no-new-privileges --tmpfs /tmp:rw,noexec,nosuid,size=64m iam-pathfinder:test
+      - name: Build the runtime image and check help
+        run: |
+          docker build -t iam-pathfinder:ci .
+          test "$(docker image inspect --format '{{.Config.User}}' iam-pathfinder:ci)" = '65532:65532'
+          docker run --rm --network none --read-only --cap-drop ALL \
+            --security-opt no-new-privileges iam-pathfinder:ci > help.txt
+          grep -q 'Find IAM privilege-escalation paths' help.txt
+      - name: Check fictional snapshot output and finding status
+        run: |
+          status=0
+          docker run --rm --network none --read-only --cap-drop ALL \
+            --security-opt no-new-privileges \
+            iam-pathfinder:ci examples/snapshot.json --json > paths.json || status=$?
+          test "$status" -eq 3
+          python3 -c 'import json; p=json.load(open("paths.json")); assert any(p.values()), "Expected candidate path in fictional fixture"'
+      - name: Check read-only input and writable report mounts
+        run: |
+          mkdir -p "$RUNNER_TEMP/iam-input" "$RUNNER_TEMP/iam-output"
+          cp examples/auth_details.json "$RUNNER_TEMP/iam-input/auth.json"
+          status=0
+          docker run --rm --network none --read-only --cap-drop ALL \
+            --security-opt no-new-privileges --user "$(id -u):$(id -g)" \
+            --mount "type=bind,src=$RUNNER_TEMP/iam-input,dst=/input,readonly" \
+            --mount "type=bind,src=$RUNNER_TEMP/iam-output,dst=/output" \
+            iam-pathfinder:ci /input/auth.json --aws-export \
+            --report /output/report.md || status=$?
+          test "$status" -eq 3
+          test -s "$RUNNER_TEMP/iam-output/report.md"
