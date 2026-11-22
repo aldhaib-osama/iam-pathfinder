@@ -64,6 +64,9 @@ warning: managed policy not in export, not evaluated: user:intern -> arn:aws:iam
 ```
 Both example commands exited with code 3 because candidate paths were found. This is not proof of exploitation.
 
+## Docker
+See the [Docker run guide](DOCKER.md) for a non-root image, offline runs, private input/report mounts and a separate test target. The existing model limits and exit codes still apply.
+
 ## Techniques covered
 | Technique | What it needs | Status/notes |
 | --- | --- | --- |
